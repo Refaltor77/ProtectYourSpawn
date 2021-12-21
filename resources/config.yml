@@ -1,0 +1,12 @@
+version: 1.0.0
+
+notification:
+  player_entering_a_zone: true
+  player_leave_a_zone: true
+  player_drop_item: true
+  player_pvp: true
+  player_chat: true
+  player_cmd: true
+  player_consume_food: true
+  block_break: true
+  block_place: true
