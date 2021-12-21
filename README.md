@@ -27,3 +27,12 @@ notification:
 <p align="center">
   <img width="250" height="250" src="https://github.com/Refaltor77/ProtectYourSpawn/blob/main/menu.png">
 </p>
+
+<h3 align="center">Changing properties Zones</h3>
+
+<p align="center"> Also with this plugin we offer you a simple way to change the attributes of your zone thanks to an intuitive list !<br></p>
+<p align="center">
+  <img width="250" height="250" src="https://github.com/Refaltor77/ProtectYourSpawn/blob/main/menu_list.png">
+  <img width="250" height="250" src="https://github.com/Refaltor77/ProtectYourSpawn/blob/main/menu_modified.png">
+</p>
+
