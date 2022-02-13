@@ -73,11 +73,12 @@ class BlockListeners implements Listener
                             new Toggle('§6» §eCommand [/]', true),
                             new Toggle('§6» §eMessage send in chat', true),
                             new Toggle('§6» §eConsume item', false),
+                            new Input ('§6» §ePriority', '0'),
                         ],
                         function (Player $player, CustomFormResponse $response) use ($uuid, $api): void
                         {
                             unset(AreaCreate::$fastCache[$uuid]);
-                            list($name, $pvp, $place, $break, $hunger, $drop, $tnt, $cmd, $chat, $consume) = $response->getValues();
+                            list($name, $pvp, $place, $break, $hunger, $drop, $tnt, $cmd, $chat, $consume, $prio) = $response->getValues();
                             if (isset($api->cache[$name])) {
                                 $player->sendMessage("§6[§eProtectYourSpawn§6]§c The name of the area already exists !");
                                 return;
@@ -92,7 +93,11 @@ class BlockListeners implements Listener
                             $flags['cmd'] = $cmd;
                             $flags['chat'] = $chat;
                             $flags['consume'] = $consume;
-                            $area = new Area(AreaCreate::$fastCache[$uuid]['1'], AreaCreate::$fastCache[$uuid]['2'], $flags, $name);
+                            if (!(int)$prio) {
+                                $player->sendMessage("§6[§eProtectYourSpawn§6]§c You must specify a priority in number !");
+                                return;
+                            }
+                            $area = new Area(AreaCreate::$fastCache[$uuid]['1'], AreaCreate::$fastCache[$uuid]['2'], $flags, $name, $prio);
                             $this->getPlugin()->getApi()->createArea($area);
                             $player->sendMessage("§6[§eProtectYourSpawn§6]§a The area §6$name §ahas been created with success !");
                         }
