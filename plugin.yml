@@ -3,5 +3,5 @@ api: 4.0.0
 main: Refaltor\ProtectYourSpawn\ProtectYourSpawn
 author: Refaltor
 website: https://github.com/Refaltor77
-version: 1.0.0
+version: 2.0.0
 description: Plugin allowing to protect your zone against players

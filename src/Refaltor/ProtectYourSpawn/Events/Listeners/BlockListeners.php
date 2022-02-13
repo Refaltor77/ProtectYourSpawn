@@ -40,22 +40,13 @@ class BlockListeners implements Listener
         if ($api->isInArea($block->getPosition())) {
             $flags = $api->getFlagsAreaByPosition($block->getPosition());
             if (!$flags['break'])  {
-                if ($this->getPlugin()->getServer()->isOp($player->getName()) || $player->hasPermission('protectyourspawn.breakblock.event')) {
-                    if (isset(AreaCreate::$fastCache[$player->getUniqueId()->getBytes()])) {
-                        $player->sendMessage("§6[§eProtectYourSpawn§6]§c You cannot create an area in another area.");
+                if (!$this->getPlugin()->getServer()->isOp($player->getName()) || $player->hasPermission('protectyourspawn.breakblock.event')) {
+                    $event->cancel();
+                    $notifyBool = $this->getPlugin()->notification['block_break'];
+                    if ($notifyBool) {
+                        $name = $api->getNameAreaByPosition($block->getPosition());
+                        $player->sendMessage("§6[§eProtectYourSpawn§6] §cYou cannot break a block in the area §6$name §c!");
                     }
-                    if (isset(AreaList::$fastCache[$player->getUniqueId()->getBytes()])) {
-                        if (AreaList::$fastCache[$player->getUniqueId()->getBytes()]['name'] !== $api->getNameAreaByPosition($block->getPosition())) {
-                            $player->sendMessage("§6[§eProtectYourSpawn§6]§c You cannot create an area in another area.");
-                        }
-                    }
-                    return;
-                }
-                $event->cancel();
-                $notifyBool = $this->getPlugin()->notification['block_break'];
-                if ($notifyBool) {
-                    $name = $api->getNameAreaByPosition($block->getPosition());
-                    $player->sendMessage("§6[§eProtectYourSpawn§6] §cYou cannot break a block in the area §6$name §c!");
                 }
             }
         } else {

@@ -6,21 +6,13 @@ use pocketmine\utils\Config;
 use pocketmine\world\Position;
 use Refaltor\ProtectYourSpawn\ProtectYourSpawn;
 
+
 class AreaManager
 {
-    /** @var ProtectYourSpawn  */
-    private ProtectYourSpawn $plugin;
-
-    /** @var array  */
     public array $cache;
-
-    /** @var Config  */
+    private ProtectYourSpawn $plugin;
     private Config $microDatabase;
 
-    /**
-     * AreaManager constructor.
-     * @param ProtectYourSpawn $plugin
-     */
     public function __construct(ProtectYourSpawn $plugin)
     {
         $this->plugin = $plugin;
@@ -36,10 +28,6 @@ class AreaManager
         $this->microDatabase->save();
     }
 
-    /**
-     * @param string $name
-     * @return array
-     */
     public function getFlagsByName(string $name): array
     {
         if (isset($this->cache[$name])) {
@@ -48,10 +36,6 @@ class AreaManager
         return Area::createBaseFlags();
     }
 
-    /**
-     * @param string $name
-     * @param array $flags
-     */
     public function setFlagsByName(string $name, array $flags): void
     {
         if (isset($this->cache[$name])) {
@@ -59,11 +43,6 @@ class AreaManager
         }
     }
 
-    /**
-     * @param string $name
-     * @param Position $pos1
-     * @param Position $pos2
-     */
     public function setPositionByName(string $name, Position $pos1, Position $pos2): void
     {
         if (isset($this->cache[$name])) {
@@ -71,7 +50,7 @@ class AreaManager
             $maximumX = intval(max($pos1->getX(), $pos2->getX()));
             $minimumZ = intval(min($pos1->getZ(), $pos2->getZ()));
             $maximumZ = intval(max($pos1->getZ(), $pos2->getZ()));
-            $string = $minimumX.':'.$maximumX.':'.$minimumZ.':'.$maximumZ;
+            $string = $minimumX . ':' . $maximumX . ':' . $minimumZ . ':' . $maximumZ;
             $this->cache[$name]['positions'] = $string;
         }
     }
@@ -90,14 +69,11 @@ class AreaManager
     {
         $name = $area->getName();
         $positions = $area->getStringPosition();
-        $flags= $area->getFlags();
-        $this->cache[$name] = ['positions' => $positions, 'flags' => $flags];
+        $flags = $area->getFlags();
+        $this->cache[$name] = ['positions' => $positions, 'flags' => $flags, 'priority' => $area->getPriority()];
     }
 
-    /**
-     * @param Position $position
-     * @return bool
-     */
+
     public function isInArea(Position $position): bool
     {
         $x = $position->getX();
@@ -106,35 +82,57 @@ class AreaManager
             $stringExplode = explode(':', $value['positions']);
             if ($x >= $stringExplode[0] && $x <= $stringExplode[1]) {
                 if ($z >= $stringExplode[2] && $z <= $stringExplode[3]) {
-                    return true;
+                    if ($stringExplode[4] === $position->getWorld()->getFolderName()) {
+                        return true;
+                    }
                 }
             }
         }
         return false;
     }
 
+    public function getPriorityByAreaName(string $name): int {
+        return $this->cache[$name]['priority'];
+    }
+
     public function getFlagsAreaByPosition(Position $position): array
     {
         $x = $position->getX();
         $z = $position->getZ();
+
+
+        $areaName = null;
+        $priority = -1;
+
         foreach ($this->cache as $name => $value) {
             $stringExplode = explode(':', $value['positions']);
             if ($x >= $stringExplode[0] && $x <= $stringExplode[1]) {
                 if ($z >= $stringExplode[2] && $z <= $stringExplode[3]) {
-                    return $value['flags'];
+                    if ($stringExplode[4] === $position->getWorld()->getFolderName()) {
+                        $prio = $this->getPriorityByAreaName($name);
+                        if ($prio > $priority) {
+                            $priority = $prio;
+                            $areaName = $name;
+                        }
+                    }
                 }
             }
         }
-        return  [
-            'pvp' => true,
-            'break' => true,
-            'place' => true,
-            'hunger' => true,
-            'dropItem' => true,
-            'chat' => true,
-            'cmd' => true,
-            'tnt' => true
-        ];
+
+        if ($areaName === null) {
+            return [
+                'pvp' => true,
+                'break' => true,
+                'place' => true,
+                'hunger' => true,
+                'dropItem' => true,
+                'chat' => true,
+                'cmd' => true,
+                'tnt' => true
+            ];
+        } else {
+            return $this->getFlagsByName($areaName);
+        }
     }
 
     public function getNameAreaByPosition(Position $position): string
@@ -145,10 +143,12 @@ class AreaManager
             $stringExplode = explode(':', $value['positions']);
             if ($x >= $stringExplode[0] && $x <= $stringExplode[1]) {
                 if ($z >= $stringExplode[2] && $z <= $stringExplode[3]) {
-                    return $name;
+                    if ($stringExplode[4] === $position->getWorld()->getFolderName()) {
+                        return $name;
+                    }
                 }
             }
         }
-        return  '404';
+        return '404';
     }
 }

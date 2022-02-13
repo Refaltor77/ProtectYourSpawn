@@ -6,14 +6,16 @@ use pocketmine\world\Position;
 
 class Area
 {
-    /** @var array  */
+    /** @var array */
     private array $flags;
 
-    /** @var string  */
+    /** @var string */
     private string $positions;
 
-    /** @var string  */
+    /** @var string */
     private string $name;
+
+    private int $priority;
 
     /**
      * Area constructor.
@@ -22,16 +24,17 @@ class Area
      * @param array $flags
      * @param string $name
      */
-    public function __construct(Position $pos1, Position $pos2, array $flags, string $name)
+    public function __construct(Position $pos1, Position $pos2, array $flags, string $name, int $priority)
     {
         $this->flags = $flags;
         $minimumX = intval(min($pos1->getX(), $pos2->getX()));
         $maximumX = intval(max($pos1->getX(), $pos2->getX()));
         $minimumZ = intval(min($pos1->getZ(), $pos2->getZ()));
         $maximumZ = intval(max($pos1->getZ(), $pos2->getZ()));
-        $string = $minimumX.':'.$maximumX.':'.$minimumZ.':'.$maximumZ;
+        $string = $minimumX . ':' . $maximumX . ':' . $minimumZ . ':' . $maximumZ . ':' . $pos1->getWorld()->getFolderName();
         $this->positions = $string;
         $this->name = $name;
+        $this->priority = $priority;
     }
 
     /**
@@ -39,7 +42,7 @@ class Area
      */
     public static function createBaseFlags(): array
     {
-        return  [
+        return [
             'pvp' => false,
             'break' => false,
             'place' => false,
@@ -60,12 +63,16 @@ class Area
         return $this->flags;
     }
 
+    public function getPriority(): int {
+        return $this->priority;
+    }
+
     /**
      * @return string
      */
     public function getName(): string
     {
-        return  $this->name;
+        return $this->name;
     }
 
     /**
