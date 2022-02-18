@@ -98,7 +98,7 @@ class BlockListeners implements Listener
                             }
                             $area = new Area(AreaCreate::$fastCache[$uuid]['1'], AreaCreate::$fastCache[$uuid]['2'], $flags, $name, $prio);
                             $this->getPlugin()->getApi()->createArea($area);
-	                        unset(AreaCreate::$fastCache[$uuid]);
+                            unset(AreaCreate::$fastCache[$uuid]);
                             $player->sendMessage("§6[§eProtectYourSpawn§6]§a The area §6$name §ahas been created with success !");
                         }
                     ));
