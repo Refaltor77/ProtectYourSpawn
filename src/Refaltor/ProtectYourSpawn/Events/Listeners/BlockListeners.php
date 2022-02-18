@@ -77,7 +77,6 @@ class BlockListeners implements Listener
                         ],
                         function (Player $player, CustomFormResponse $response) use ($uuid, $api): void
                         {
-                            unset(AreaCreate::$fastCache[$uuid]);
                             list($name, $pvp, $place, $break, $hunger, $drop, $tnt, $cmd, $chat, $consume, $prio) = $response->getValues();
                             if (isset($api->cache[$name])) {
                                 $player->sendMessage("§6[§eProtectYourSpawn§6]§c The name of the area already exists !");
@@ -99,6 +98,7 @@ class BlockListeners implements Listener
                             }
                             $area = new Area(AreaCreate::$fastCache[$uuid]['1'], AreaCreate::$fastCache[$uuid]['2'], $flags, $name, $prio);
                             $this->getPlugin()->getApi()->createArea($area);
+	                        unset(AreaCreate::$fastCache[$uuid]);
                             $player->sendMessage("§6[§eProtectYourSpawn§6]§a The area §6$name §ahas been created with success !");
                         }
                     ));
